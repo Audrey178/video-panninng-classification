@@ -1,0 +1,30 @@
+
+defaults:
+    - _self_
+
+strategy: 'baseline'
+
+# dataset
+datapath: "/data/frames"
+batch_size: 10
+train_fraction: 0.8
+test_fraction: 0.2
+num_classes: 3
+img_size: 224
+patch_size: 16
+
+
+
+# training
+opt: 'adam'
+model: "vit_transformer"
+dropout: 0.25
+max_epochs: 10
+weight_decay: 1e-5
+lr: 2e-4
+hidden_size: 512
+log_data: True
+
+
+#result
+results_dir_path: "results"
