@@ -61,30 +61,25 @@ def load_data(data_path):
 @hydra.main(config_path='configs', version_base=None)
 def main(cfg: OmegaConf):
     logger.info("config: %s", cfg)
-    # timm_kwargs = {
-    #     'img_size': 224, 
-    #     'patch_size': 16, 
-    #     'depth': 24,
-    #     'num_heads': 24,
-    #     'init_values': 1e-5, 
-    #     'embed_dim': 1536,
-    #     'mlp_ratio': 2.66667*2,
-    #     'num_classes': 0, 
-    #     'no_embed_class': True,
-    #     'mlp_layer': timm.layers.SwiGLUPacked, 
-    #     'act_layer': torch.nn.SiLU, 
-    #     'reg_tokens': 8, 
-    #     'dynamic_img_size': True
-    # }
-    # model = timm.create_model(model_name= 'hf-hub:MahmoodLab/UNI2-h', pretrained=True, **timm_kwargs)
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    # transform = create_transform(**resolve_data_config(model.pretrained_cfg))
-    # Load pretrained ResNet18
-    resnet18 = models.resnet18(pretrained=True)
-
-    modules = list(resnet18.children())[:-1]  
-    model = torch.nn.Sequential(*modules)
+    timm_kwargs = {
+        'img_size': 224, 
+        'patch_size': 16, 
+        'depth': 24,
+        'num_heads': 24,
+        'init_values': 1e-5, 
+        'embed_dim': 1536,
+        'mlp_ratio': 2.66667*2,
+        'num_classes': 0, 
+        'no_embed_class': True,
+        'mlp_layer': timm.layers.SwiGLUPacked, 
+        'act_layer': torch.nn.SiLU, 
+        'reg_tokens': 8, 
+        'dynamic_img_size': True
+    }
+    model = timm.create_model(model_name= 'hf-hub:MahmoodLab/UNI2-h', pretrained=True, **timm_kwargs)
+    for param in model.parameters():
+        param.requires_grad = False
+    transform = create_transform(**resolve_data_config(model.pretrained_cfg))
     
     #------------Data-----------
     frames_paths, labels = load_data(data_paths['train'])
