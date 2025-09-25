@@ -3,10 +3,12 @@ defaults:
     - _self_
 
 strategy: 'baseline'
+seed: 42
+
 
 # dataset
 datapath: "/data/frames"
-batch_size: 10
+batch_size: 4
 train_fraction: 0.8
 test_fraction: 0.2
 num_classes: 3
@@ -14,16 +16,19 @@ img_size: 224
 patch_size: 16
 
 
-
 # training
 opt: 'adam'
 model: "vit_transformer"
 dropout: 0.25
-max_epochs: 10
+max_epochs: 20
 weight_decay: 1e-5
 lr: 2e-4
 hidden_size: 512
 log_data: True
+r: 8
+lora_alpha: 16
+lora_dropout: 0.15
+target_modules: ['qkv', 'proj']
 
 
 #result

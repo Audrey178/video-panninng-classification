@@ -48,16 +48,28 @@ class VideoDataset_h5(Dataset):
         label = self.labels[idx]
         try:
             with h5py.File(file_path, 'r') as f:
-                imgs = f['frames'][:]
-            imgs = [Image.fromarray(img) for img in imgs]
+                imgs = torch.from_numpy(f['frames'][:]).permute(0, 3, 1, 2).float() / 255.0
             if self.transform is not None:
-                imgs = [self.transform(img) for img in imgs]
-            imgs = torch.stack(imgs)
+                imgs = self.transform(imgs)
             return imgs, torch.tensor(label)
         except Exception as e:
             raise ValueError(f'Error: {e}')
+        
+def collate_fn(batch):
+    videos, labels = zip(*batch)  # tuple of (Ti, 3, H, W)
+    lengths = [v.shape[0] for v in videos]
 
+    # Pad thành [B, T_max, 3, H, W]
+    videos = torch.nn.utils.rnn.pad_sequence(videos, batch_first=True)
 
+    # Mask: [B, T_max], 1=real, 0=pad
+    mask = torch.zeros(videos.size(0), videos.size(1), dtype=torch.bool)
+    for i, l in enumerate(lengths):
+        mask[i, :l] = 1
+
+    return videos, torch.tensor(labels), mask
+
+    
  
         
     

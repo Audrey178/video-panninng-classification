@@ -106,11 +106,11 @@ def train_loop(epoch, model, loader, optimizer, device, loss_fn = None):
     model.train()
     train_loss = 0.
 
-    print('==============Training===============\n')
-    for batch_idx, (data, label) in enumerate(loader):
-        data, label = data.to(device), label.to(device)
+    print(f'==============Training Epoch {epoch}===============')
+    for batch_idx, (data, label, mask) in enumerate(loader):
+        data, label, mask = data.to(device), label.to(device), mask.to(device)
 
-        logits = model(data)
+        logits = model(data, mask)
         loss = loss_fn(logits, label)
         loss_value = loss.item()
         
@@ -140,9 +140,9 @@ def validate(epoch, model, loader, device , strategy , loss_fn = None, results_d
     # labels = np.zeros(len(loader))
 
     with torch.no_grad():
-        for batch_idx, (data, label) in enumerate(loader):
-            data, label = data.to(device), label.to(device)
-            logits = model(data)
+        for batch_idx, (data, label, mask) in enumerate(loader):
+            data, label, mask = data.to(device), label.to(device)
+            logits = model(data, mask)
             Y_hat = torch.argmax(logits, dim=1)
 
             all_preds.append(Y_hat.cpu())
